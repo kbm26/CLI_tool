@@ -1,13 +1,13 @@
 import subprocess
 from collections. abc import Mapping
-from rich import print as rprint
+# from rich import print as rprint
 import sys
-import typer
-from PyInquirer import prompt, print_json, Separator
+# import typer
+# from PyInquirer import prompt, print_json, Separator
 
-app = typer.Typer()
+# app = typer.Typer()
 
-def main():
+def app():
     """
     Handles user's input and executes the appropriate commands
     """
@@ -55,7 +55,7 @@ def argument_validator(args:list) -> list:
         
         
     
-@app.command()
+# @app.command()
 def say_hi(name):
     print(f"hi {name}")
 
