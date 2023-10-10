@@ -1,11 +1,13 @@
-import typer
-import array
 import subprocess
 from collections. abc import Mapping
 from rich import print as rprint
 import sys
+import typer
+from PyInquirer import prompt, print_json, Separator
 
-def app():
+app = typer.Typer()
+
+def main():
     """
     Handles user's input and executes the appropriate commands
     """
@@ -20,7 +22,7 @@ def app():
             
     
     
-def make(args:list) -> None:
+def make(args:list) :
     if (len(args)==2):
         
         match args[0] :
@@ -36,30 +38,26 @@ def make(args:list) -> None:
                 
 def make_repo(repo_name:str) -> None:
     subprocess.run(["mkdir",f"{repo_name}"])
-
     
     
                 
-
-        
-    
-
     
 def command_validator(command:str) -> str:
-    command_list = array(["find","make","delete","dev"])
-    if(command.lower() in command_list and not command.isdigit()):
+    command_list = ["find","make","delete","dev"]
+    if(command.lower() in command_list):
         return command
     else:
         return "invalid"
         
 
-def argument_validator(args:list) -> list():
+def argument_validator(args:list) -> list:
     return [arg for arg in args if arg != '']
         
         
     
-
-
+@app.command()
+def say_hi(name):
+    print(f"hi {name}")
 
 if __name__ == "__main__":
     app()    
