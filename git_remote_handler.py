@@ -6,6 +6,8 @@ from github import Github
 from github import Auth
 import subprocess
 from InquirerPy import inquirer
+import github.Repository as Repo
+import github.Label as Label
 
 
 def credentials_validator() -> bool:
@@ -55,7 +57,6 @@ def show_all_repos(git:Github) -> None:
     for repo in git.get_user().get_repos():
         print(repo.name)
         
-    git_close(git)
         
 def git_login() -> Github:
     """Logins to user's github account
@@ -66,36 +67,13 @@ def git_login() -> Github:
     directory = os.path.dirname(".secrets/creds.json")
     with open(f"{directory}/creds.json","r+") as f:
         user:dict = json.load(f)
+        
     creds = user.get("token")
     auth = Auth.Token(creds)
     git = Github(auth=auth)
     git.get_user().login
     
     return git
-    
-def git_close(git:Github) :
-    """Closes the github access object for security reasons
-
-    Args:
-        git (Github): Access object to execute methods
-    """
-    git.close()
-    
-    
-def change_issue_label(git:Github, label:str) -> None:
-    """Changes the label of a single commit from a repo
-
-    Args:
-        git (Github): Access object to execute methods
-        label (str): The new name of the label for the issue
-    """
-    # Will change
-    for repo in git.get_user().get_repos():
-        print(repo.name)
-        for issue in repo.get_issues():
-            print(issue.set_labels("completed"))
-            
-    git_close(git)
     
     
 def create_repository(git:Github, repo_name:str) -> None:
@@ -109,41 +87,44 @@ def create_repository(git:Github, repo_name:str) -> None:
     user.create_repo(repo_name)
     
     
-def delete_repository(git:Github, repo_name:str) -> None:
+def delete_repository(repo:Repo.Repository) -> None:
     """Deletes a repository under the logged in user
 
     Args:
-        git (Github): Access object to execute methods
-        repo_name (str): The name of the repo that the user wants to delete
+        repo (Repo.Repository): The repo object that will be deleted
     """
-    user = git.get_user()
-    repo = user.get_repo(repo_name)
     repo.delete()
     
     
-def create_issues(git:Github, repo_name:str , title:str , body:str="" ,label:str="", assignee:str="" ):
-    user = git.get_user()
-    repo = user.get_repo(repo_name)
+def create_issue(repo:Repo.Repository , title:str , body:str="" ,label:str="", assignee:str="" ):
     repo.create_issue(title=title,body=body,assignee=assignee)
     repo.get_issue(repo.get_issues().totalCount).set_labels(label)
-    git_close(git)
     
-def close_issues(git:Github, repo_name:str ,issue_number:int ):
-    user = git.get_user()
-    repo = user.get_repo(repo_name)
-    repo.get_issue(issue_number)
-
-    git_close(git)
+def close_issue(repo:Repo.Repository ,issue_number:int ):
+    repo.get_issue(issue_number).edit(state="closed")
 
 
-def edit_issues(git:Github, repo_name:str ,issue_number:int, title:str , body:str="" ,label:str="", assignee:str=""):
-    user = git.get_user()
-    repo = user.get_repo(repo_name)
+def edit_issue(repo:Repo.Repository ,issue_number:int, title:str , body:str="" ,label:str="", assignee:str=""):
     repo.create_issue(title=title,body=body,assignee=assignee)
     repo.get_issue(issue_number).set_labels(label)
+        
+def show_all_issues(repo:Repo.Repository) :
+    all_issues = {}
+    for issue in repo.get_issues():
+        # remove \r\n```
+        all_issues.update({f"{issue.number}":f"{issue._body.value}"})
+    print(all_issues)
+
     
-    git_close(git)
+    
+def find_repo(git:Github, repo_name:str) -> Repo.Repository:
+    user = git.get_user()
+    return user.get_repo(repo_name)
+    
+    
 
 
 if __name__ == '__main__':
-    create_issues(git_login(),"CLI_tool","test","here is a test","backlog")
+    # create_issue(find_repo(git_login(),"TEST"),"final_edit_test","here is a test",label="label")
+    # create_repository(git_login(),"TEST")
+    show_all_issues(find_repo(git_login(),"CLI_TOOL"))
