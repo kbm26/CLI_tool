@@ -111,8 +111,15 @@ def edit_issue(repo:Repo.Repository ,issue_number:int, title:str , body:str="" ,
 def show_all_issues(repo:Repo.Repository) :
     all_issues = {}
     for issue in repo.get_issues():
-        # remove \r\n```
-        all_issues.update({f"{issue.number}":f"{issue._body.value}"})
+        body = issue.body.replace("\n", "").replace("\r", "").replace("```","")
+        all_issues.update({f"{issue.number}":f"{body}"})
+        
+    for issue in repo.get_issues(state="closed"):
+        print(issue)
+        if(issue.body != None):
+            body = issue.body.replace("\n", "").replace("\r", "").replace("```","")
+            all_issues.update({f"{issue.number}":f"{body}"})
+        
     print(all_issues)
 
     
