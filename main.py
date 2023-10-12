@@ -1,11 +1,6 @@
 import subprocess
-from collections. abc import Mapping
-# from rich import print as rprint
 import sys
-# import typer
-# from PyInquirer import prompt, print_json, Separator
 
-# app = typer.Typer()
 
 def app():
     """
