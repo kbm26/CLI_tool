@@ -173,6 +173,4 @@ def find_repo(git:Github, repo_name:str) -> Repo.Repository:
 
 
 if __name__ == '__main__':
-    # create_issue(find_repo(git_login(),"TEST"),"final_edit_test","here is a test",label="label")
-    # create_repository(git_login(),"TEST")
-    show_all_issues(find_repo(git_login(),"CLI_TOOL"))
+    print(find_repo(git_login(),"TEST").clone_url.removeprefix("https://"))
