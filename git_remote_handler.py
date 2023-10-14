@@ -3,6 +3,7 @@ import json
 from pprint import pprint
 from github import Github
 from github import Auth
+import github
 import subprocess
 from InquirerPy import inquirer
 import github.Repository as Repo
@@ -144,15 +145,29 @@ def show_all_issues(repo:Repo.Repository) -> dict:
     
     all_issues = {}
     for issue in repo.get_issues():
-        body = issue.body.replace("\n", "").replace("\r", "").replace("```","")
-        all_issues.update({f"{issue.number}":f"{body}"})
+        all_issues.update({f"{issue.number}":issue_object_formatter(issue)})
         
     for issue in repo.get_issues(state="closed"):
-        if(issue.body != None):
-            body = issue.body.replace("\n", "").replace("\r", "").replace("```","")
-            all_issues.update({f"{issue.number}":issue})
+        all_issues.update({f"{issue.number}":issue_object_formatter(issue)})
+
         
     return all_issues
+
+def issue_object_formatter(issue) -> dict:
+    issue_dict = {
+        "title":f"{issue.title}",
+        "body":"",
+        "status":f"{issue.state}",
+        "label(s)":[],
+    }
+    if(issue.body != None):
+        body = issue.body.replace("\n", "").replace("\r", "").replace("```","")
+        issue_dict.update({"body":f"{body}"})
+    if(issue.labels != None):
+        issue_dict.update({"label(s)":[label.name for label in issue.labels]})
+    return issue_dict
+        
+
 
     
     
@@ -171,6 +186,5 @@ def find_repo(git:Github, repo_name:str) -> Repo.Repository:
     
     
 
-
 if __name__ == '__main__':
-    print(find_repo(git_login(),"TEST").clone_url.removeprefix("https://"))
+    pprint(len(show_all_issues(find_repo(git_login(),"CLI_tool"))))
