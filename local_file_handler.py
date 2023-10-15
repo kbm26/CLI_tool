@@ -1,5 +1,4 @@
 import subprocess
-import sys
 import git_remote_handler as git
        
 def make_remote_and_local_repo(repo_name:str) -> None:
@@ -40,8 +39,12 @@ def delete_folder(folder_name:str) -> None:
 def make_folder(folder_name:str) -> None:
     subprocess.run(["mkdir",f"{folder_name}"])
     
+def find_files_and_directories():
+    bytes = subprocess.run("ls", capture_output=True).stdout
+    print(bytes.decode("utf-8").split("\n"))
+    
+    
 
-            
 
 if __name__ == "__main__":
-    make_repo("k")
+    find_files_and_directories()

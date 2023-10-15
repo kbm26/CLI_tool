@@ -3,9 +3,7 @@ import json
 from pprint import pprint
 from github import Github
 from github import Auth
-import github
 import subprocess
-from InquirerPy import inquirer
 import github.Repository as Repo
 
 
@@ -31,7 +29,10 @@ def create_credentials() -> None:
     Asks user for GitHub Access Token
     then creates a folder and file for the user's token
     """
-    subprocess.run(["mkdir","./.secrets"])
+    try:
+        subprocess.run(["mkdir",".secrets"])
+    except Exception:
+        pass    
     write_token()
         
 def write_token() -> None:
@@ -39,7 +40,6 @@ def write_token() -> None:
     write the token to the creds json
     """
     token = input("Enter Your GitHub Access Token: ")
-    subprocess.run(["mkdir",".secrets"])
     creds = {
         "token": token,
     }
@@ -47,14 +47,16 @@ def write_token() -> None:
     with open(".secrets/creds.json", "w") as outfile:
         json.dump(creds, outfile)
     
-def show_all_repos(git:Github) -> None:
+def show_all_repos(git:Github) -> list:
     """Displays all repos under a user's name from github
 
     Args:
         git (Github): Access object to execute methods
+        
+    Returns:
+        list: list of all the repos under your github account
     """
-    for repo in git.get_user().get_repos():
-        print(repo.name)
+    return [repo.name for repo in git.get_user().get_repos()]
         
         
 def git_login() -> Github:
@@ -117,7 +119,15 @@ def close_issue(repo:Repo.Repository ,issue_number:int):
     """
     repo.get_issue(issue_number).edit(state="closed")
 
+def open_issue(repo:Repo.Repository ,issue_number:int):
+    """Opens a specified issue in a repo
 
+    Args:
+        repo (Repo.Repository): repo in which the issue will be opened
+        issue_number (int): number of the issue that will be opened
+    """
+    repo.get_issue(issue_number).edit(state="open")
+    
 def edit_issue(repo:Repo.Repository ,issue_number:int, title:str , body:str="" ,label:str="", assignee:str=""):
     """Edits a issue
 
