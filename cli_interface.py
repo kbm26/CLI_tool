@@ -4,7 +4,7 @@ import os
 from InquirerPy.base.control import Choice
 from InquirerPy.separator import Separator
 import InquirerPy.prompts.filepath as file_finder
-
+from tabulate import tabulate
 
 def directory_inquirer() -> str:
     home_path = "~/" if os.name == "posix" else "C:\\"
@@ -27,7 +27,14 @@ def file_inquirer() -> str:
     ).execute()
     return src_path
 
-
+def remote_repo_inquirer(repos_list: list) -> str:
+    repos = { repo:None for repo in repos_list}
+    repo = inquirer.text(
+        message="Select Repo:",
+        validate= lambda repo : repo in repos_list,
+        completer=repos
+    ).execute()
+    return repo
 
 def mode_selector() -> str:
     return select_menu([
@@ -48,42 +55,65 @@ def file_manipulation_mode() -> str:
         Separator(),
         "File",
         Separator(),
-        "Directory",
-        Separator(),
-        "Local + Remote Repo", #
-        Separator(),
-        "Local Repo",
-        Separator(),
-        "Remote Repo", #
-        Separator(),
-        "Issue on Repo", #
+        "Directory", 
         Separator(),
         Choice(value=None, name="Exit"),
         ],"What would you like to create: ")
 
-def view_mode() -> str:
-    return select_menu([
-        Separator(),
-        "Directories and files",
-        Separator(),
-        "Repositories", #
-        Separator(),
-        "Issues", #
-        Separator(),
-        Choice(value=None, name="Exit"),
-        ],"What would you like to view: ")
+
     
 def git_mode() -> str:
     return select_menu([
         Separator(),
         "Change/Insert Token",
         Separator(),
-        "Repositories", #
+        "Create", 
         Separator(),
-        "Issues", #
+        "Delete", 
+        Separator(),
+        "View", 
         Separator(),
         Choice(value=None, name="Exit"),
         ],"What would you like to view: ")
+    
+def git_mode_create():
+    return select_menu(
+        [
+        Separator(),
+        "Remote & Local repo",
+        Separator(),
+        "Remote repo", 
+        Separator(),
+        "Local repo", 
+        Separator(),
+        "Issue on repo", 
+        Separator(),
+        Choice(value=None, name="Exit"),
+        ],"What would you like to view: "
+    )
+    
+def git_mode_delete():
+    return select_menu(
+        [
+        Separator(),
+        "Remote repo",
+        Separator(),
+        "Issue on repo", 
+        Separator(),
+        Choice(value=None, name="Exit"),
+        ],"What would you like to view: "
+    )
+    
+def git_view_mode() -> str:
+    return select_menu([
+        Separator(),
+        "Issues on repos",
+        Separator(),
+        "Remote repos", 
+        Separator(),
+        Choice(value=None, name="Exit"),
+        ],"What would you like to view: ")
+        
         
 def display_issue(issues:dict) -> None:
     table = []
@@ -128,8 +158,8 @@ def select_menu (choices:list, message:str) -> str:
     ).execute()
     return action
 
-def show_directories_and_files(items:str) -> None:
-    print(items)
+def show_tabulate(items:str) -> None:
+    print(tabulate(items))
         
 if __name__ == "__main__":
     print(file_inquirer())

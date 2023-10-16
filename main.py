@@ -29,7 +29,10 @@ def git():
             case "Delete":
                 pass
             
+def git_create():
+    pass
             
+
 def create_file():
     path = ui.directory_inquirer()
     if [*path][-1] == "/":
@@ -66,7 +69,13 @@ def delete_directory():
         print("Directory not selected")
 
 
-    
+def view_files_and_its_contents():
+    path = ui.directory_inquirer()
+    if [*path][-1] == "/":
+        ui.show_directories_and_files(local.find_files_and_directories())
+    else:
+        print("Directory not selected")
+
 
 if __name__ == "__main__":
-    create_file()
+    ui.remote_repo_inquirer(remote.show_all_repos(remote.git_login()))
