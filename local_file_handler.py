@@ -28,6 +28,7 @@ def make_local_repo(repo_name:str) -> None:
     subprocess.run(["git","init",f"./{repo_name}"])
     
 def make_file(file_name:str) -> None:
+    print(file_name)
     subprocess.run(["touch",f"{file_name}"])
     
 def delete_file(file_name:str) -> None:

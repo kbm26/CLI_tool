@@ -31,22 +31,42 @@ def git():
             
             
 def create_file():
-    input = input("Name the file you want to create (with an extension eg. .txt)")
-    local.make_file(input)
+    path = ui.directory_inquirer()
+    if [*path][-1] == "/":
+        file = input("Name the file you want to create (with an extension eg. .txt)")
+        local.make_file(f"{path}{file}")
+    else:
+        print("Directory not selected")
     
 def delete_file():
-    input = input("Name the file you want to delete (with an extension eg. .txt)")
-    local.delete_file(input)
+    path = ui.directory_inquirer()
+    if [*path][-1] == "/":
+        file = input("Name of the file you want to delete (with an extension eg. `.txt`)")
+        local.delete_file(file)
+    else:
+        print("Directory not selected")
+
 
 def create_directory():
-    pass
+    path = ui.directory_inquirer()
+    if [*path][-1] == "/":
+        Directory = input("Name the Directory you want to create")
+        local.make_folder(Directory)    
+    else:
+        print("Directory not selected")
+
     
     
 def delete_directory():
-    pass
+    path = ui.directory_inquirer()
+    if [*path][-1] == "/":
+        Directory = input("Name of the empty Directory you want to delete")
+        local.delete_folder(Directory)   
+    else:
+        print("Directory not selected")
 
-    
+
     
 
 if __name__ == "__main__":
-    git()
+    create_file()

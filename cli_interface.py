@@ -6,7 +6,7 @@ from InquirerPy.separator import Separator
 import InquirerPy.prompts.filepath as file_finder
 
 
-def directory_inquirer():
+def directory_inquirer() -> str:
     home_path = "~/" if os.name == "posix" else "C:\\"
     src_path = inquirer.text(
         message="Select Directory:",
@@ -17,7 +17,7 @@ def directory_inquirer():
     return src_path
     
     
-def file_inquirer():
+def file_inquirer() -> str:
     home_path = "~/" if os.name == "posix" else "C:\\"
     src_path = inquirer.text(
         message="Select File:",
@@ -29,7 +29,7 @@ def file_inquirer():
 
 
 
-def mode_selector():
+def mode_selector() -> str:
     return select_menu([
             Separator(),
             "Create",
@@ -43,7 +43,7 @@ def mode_selector():
             Choice(value=None, name="Exit"),
         ],"Select an Mode: ")
 
-def file_manipulation_mode():
+def file_manipulation_mode() -> str:
     return select_menu([
         Separator(),
         "File",
@@ -61,7 +61,7 @@ def file_manipulation_mode():
         Choice(value=None, name="Exit"),
         ],"What would you like to create: ")
 
-def view_mode():
+def view_mode() -> str:
     return select_menu([
         Separator(),
         "Directories and files",
@@ -73,7 +73,7 @@ def view_mode():
         Choice(value=None, name="Exit"),
         ],"What would you like to view: ")
     
-def git_mode():
+def git_mode() -> str:
     return select_menu([
         Separator(),
         "Change/Insert Token",
@@ -85,13 +85,13 @@ def git_mode():
         Choice(value=None, name="Exit"),
         ],"What would you like to view: ")
         
-def display_issue(issues:dict):
+def display_issue(issues:dict) -> None:
     table = []
     for count,entry in enumerate(issues.values()):
         table.append(issue_details(entry,count))
     print(table,headers=["No.","Title", "Body","status","Label(s)"],tablefmt="double_grid")
         
-def select_issue(issues:dict):
+def select_issue(issues:dict) -> None:
     table = []
     for count,entry in enumerate(issues.values()):
         details = issue_details(entry,count)
@@ -101,7 +101,7 @@ def select_issue(issues:dict):
     action  = select_menu(table,"Select An Issue (index | title | body | status | label(s)): ")
     print((find_issue_number(action)))
     
-def issue_details(issue:dict, count:int):
+def issue_details(issue:dict, count:int) -> list:
         row = [count+1]
         row.append(replace_when_empty("title",issue))
         row.append(replace_when_empty("body",issue))
@@ -114,10 +114,10 @@ def find_issue_number(issue:str) -> int:
     return int("".join(issue_number_list))
 
     
-def replace_when_empty(key:str, dict: dict):
+def replace_when_empty(key:str, dict: dict) -> str:
     return "None" if  dict.get(key) == "" or dict.get(key) == [] else dict.get(key)
 
-def select_menu (choices:list, message:str):
+def select_menu (choices:list, message:str) -> str:
     action:str = inquirer.select(
     message=message,
     choices=choices,
@@ -128,7 +128,7 @@ def select_menu (choices:list, message:str):
     ).execute()
     return action
 
-def show_directories_and_files(items:str):
+def show_directories_and_files(items:str) -> None:
     print(items)
         
 if __name__ == "__main__":
