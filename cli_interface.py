@@ -14,6 +14,7 @@ def directory_inquirer() -> str:
         validate=PathValidator(is_dir=True, message="Input is not a file"),
         completer=file_finder.FilePathCompleter(only_files=False,only_directories=True)
     ).execute()
+    print(type(src_path))
     return src_path
     
     
@@ -94,7 +95,7 @@ def git_mode() -> str:
         Choice(value=None, name="Exit"),
         ],"What would you like to do: ")
     
-def git_mode_create():
+def git_mode_create() -> str:
     return select_menu(
         [
         Separator(),
@@ -110,7 +111,7 @@ def git_mode_create():
         ],"What would you like to create: "
     )
     
-def git_mode_delete():
+def git_mode_delete() -> str:
     return select_menu(
         [
         Separator(),
@@ -176,7 +177,7 @@ def select_menu (choices:list, message:str) -> str:
     ).execute()
     return action
 
-def issue_detail_inquirer():
+def issue_detail_inquirer() -> str:
     title = inquirer.text(message="Enter the title of the issue: ").execute()
     body = inquirer.text(message="Enter the body of the issue: ").execute()
     label = inquirer.text(message="Enter the label of the issue: ").execute()
@@ -188,8 +189,8 @@ def issue_detail_inquirer():
     return issue
 
 
-def show_tabulate(items:list) -> None:
-    print(tabulate(items,tablefmt="double_grid",headers=["Repositories"]))
+def show_tabulate(items:list,header) -> None:
+    print(tabulate(items,tablefmt="double_grid",headers=[f"{header}"]))
         
 if __name__ == "__main__":
     print(file_inquirer())

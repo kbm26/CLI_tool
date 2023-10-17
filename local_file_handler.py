@@ -11,7 +11,7 @@ def make_remote_and_local_repo(repo_name:str) -> None:
     
     make_local_repo(repo_name)
     
-    subprocess.run(["touch",f"./{repo_name}/text.txt",])
+    subprocess.run([f"touch {repo_name}/text.txt",])
     subprocess.run(["git",git_dir,work_dir,"add","."])
     subprocess.run(["git",git_dir,work_dir,"commit","-m","first commit"])
     subprocess.run(["git",git_dir,work_dir,"branch","-M","main"])
@@ -23,27 +23,27 @@ def make_remote_repo(repo_name:str) -> None:
     git.create_repository(auth,repo_name)
     
 def make_local_repo(repo_name:str) -> None:
-    subprocess.run(["mkdir",f"{repo_name}"])
+    subprocess.run(["bash","-c","mkdir",f"{repo_name}"])
     subprocess.run(["git","init",f"./{repo_name}"])
     
 def make_file(file_name:str) -> None:
-    subprocess.run(["touch",f"{file_name}"])
+    subprocess.run([f"touch {file_name}"],shell=True)
     
 def delete_file(file_name:str) -> None:
-    subprocess.run(["rm",f"{file_name}"])
+    subprocess.run(["bash","-c","rm",f"{file_name}"])
     
 def delete_folder(folder_name:str) -> None:
-    subprocess.run(["rmdir",f"{folder_name}"])
+    subprocess.run(["bash","-c","rmdir",f"{folder_name}"])
             
 def make_folder(folder_name:str) -> None:
-    subprocess.run(["mkdir",f"{folder_name}"])
+    subprocess.run(["bash","-c","mkdir",f"{folder_name}"])
     
-def find_files_and_directories(directory):
-    bytes = subprocess.run("ls",f"{directory}", capture_output=True).stdout
+def find_files_and_directories(directory) -> list:
+    bytes = subprocess.run(["bash","-c","ls",f"{directory}"], capture_output=True).stdout.strip()
     table = [ [word] for word in bytes.decode("utf-8").split("\n") ]
     return table
     
 
 
 if __name__ == "__main__":
-    find_files_and_directories()
+    make_file("k")

@@ -6,7 +6,7 @@ def main():
     mode = ui.mode_selection()
     match mode:
         case "Local":
-            pass
+            local_mode()
         case "remote (GitHub)":
             git()
 
@@ -26,6 +26,33 @@ def git():
                 git_create()
             case "Delete":
                 git_delete()
+                
+def local_mode():
+    action = ui.local_action_selector()
+    if action == "View":
+        view_files_and_its_contents()
+    else:
+        choice = ui.file_manipulation_action(action)
+        match choice:
+            case "File":
+                file_action(action)
+            case "Directory":
+                directory_action(action)
+
+    
+    
+def file_action(action:str):
+    if action == "Create":
+        create_file()
+    else:
+        delete_file()
+    
+def directory_action(action:str):
+    if action == "Create":
+        create_directory()
+    else:
+        delete_directory()
+    
             
 def git_create():
     choice = ui.git_mode_create()
@@ -95,7 +122,7 @@ def delete_directory():
 def view_files_and_its_contents():
     path = ui.directory_inquirer()
     if [*path][-1] == "/":
-        ui.show_directories_and_files(local.find_files_and_directories())
+        ui.show_tabulate(local.find_files_and_directories(path),"Contents")
     else:
         print("Directory not selected")
         
@@ -129,7 +156,7 @@ def create_issue_on_repo():
         
 def display_all_repos():
     repos = remote.show_all_repos(remote.git_login())
-    ui.show_tabulate([[repo] for repo in repos])
+    ui.show_tabulate([[repo] for repo in repos],"Repositories")
 
 def display_issues_in_repo():
     auth = remote.git_login()
@@ -159,6 +186,7 @@ def delete_issue_on_repo():
         remote.close_issue(repo,issue_number)   
 
 
+
     
 if __name__ == "__main__":
-    delete_issue_on_repo()
+    main()
