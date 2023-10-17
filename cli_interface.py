@@ -28,15 +28,35 @@ def file_inquirer() -> str:
     return src_path
 
 def remote_repo_inquirer(repos_list: list) -> str:
-    repos = { repo:None for repo in repos_list}
-    repo = inquirer.text(
+    repo = inquirer.select(
         message="Select Repo:",
-        validate= lambda repo : repo in repos_list,
-        completer=repos
+        choices=repos_list
     ).execute()
     return repo
 
-def mode_selector() -> str:
+def repo_issue_inquirer(repos_list: list) -> str:
+    repo = inquirer.select(
+        message="Select issue:",
+        choices=repos_list
+    ).execute()
+    return repo
+
+def confirmation() -> bool:
+    proceed = False
+    proceed = inquirer.confirm(message="Confirm?", default=True).execute()
+    return proceed
+
+def mode_selection() -> str:
+    return select_menu([
+            Separator(),
+            "Local",
+            Separator(),
+            "remote (GitHub)",
+            Separator(),
+            Choice(value=None, name="Exit"),
+        ],"Select an Mode: ")
+
+def local_action_selector() -> str:
     return select_menu([
             Separator(),
             "Create",
@@ -45,12 +65,10 @@ def mode_selector() -> str:
             Separator(),
             "View",
             Separator(),
-            "Git (GitHub)",
-            Separator(),
             Choice(value=None, name="Exit"),
-        ],"Select an Mode: ")
+        ],"What would you like to do: ")
 
-def file_manipulation_mode() -> str:
+def file_manipulation_action(mode:str) -> str:
     return select_menu([
         Separator(),
         "File",
@@ -58,7 +76,7 @@ def file_manipulation_mode() -> str:
         "Directory", 
         Separator(),
         Choice(value=None, name="Exit"),
-        ],"What would you like to create: ")
+        ],f"What would you like to {mode}: ")
 
 
     
@@ -74,7 +92,7 @@ def git_mode() -> str:
         "View", 
         Separator(),
         Choice(value=None, name="Exit"),
-        ],"What would you like to view: ")
+        ],"What would you like to do: ")
     
 def git_mode_create():
     return select_menu(
@@ -89,7 +107,7 @@ def git_mode_create():
         "Issue on repo", 
         Separator(),
         Choice(value=None, name="Exit"),
-        ],"What would you like to view: "
+        ],"What would you like to create: "
     )
     
 def git_mode_delete():
@@ -101,10 +119,10 @@ def git_mode_delete():
         "Issue on repo", 
         Separator(),
         Choice(value=None, name="Exit"),
-        ],"What would you like to view: "
+        ],"What would you like to delete: "
     )
     
-def git_view_mode() -> str:
+def git_mode_view() -> str:
     return select_menu([
         Separator(),
         "Issues on repos",
@@ -115,11 +133,11 @@ def git_view_mode() -> str:
         ],"What would you like to view: ")
         
         
-def display_issue(issues:dict) -> None:
+def display_issues(issues:dict) -> None:
     table = []
     for count,entry in enumerate(issues.values()):
         table.append(issue_details(entry,count))
-    print(table,headers=["No.","Title", "Body","status","Label(s)"],tablefmt="double_grid")
+    print(tabulate(table,headers=["No.","Title", "Body","status","Label(s)"],tablefmt="double_grid"))
         
 def select_issue(issues:dict) -> None:
     table = []
@@ -129,7 +147,7 @@ def select_issue(issues:dict) -> None:
         table.append(f"{details[0]} | {details[1]} | {details[2]} | {details[3]} | {details[4]}")
     table.append(Choice(value=None, name="Exit"))
     action  = select_menu(table,"Select An Issue (index | title | body | status | label(s)): ")
-    print((find_issue_number(action)))
+    return action
     
 def issue_details(issue:dict, count:int) -> list:
         row = [count+1]
@@ -158,8 +176,20 @@ def select_menu (choices:list, message:str) -> str:
     ).execute()
     return action
 
-def show_tabulate(items:str) -> None:
-    print(tabulate(items))
+def issue_detail_inquirer():
+    title = inquirer.text(message="Enter the title of the issue: ").execute()
+    body = inquirer.text(message="Enter the body of the issue: ").execute()
+    label = inquirer.text(message="Enter the label of the issue: ").execute()
+    issue = {
+        "title":title,
+        "body":body,
+        "label":label
+    }
+    return issue
+
+
+def show_tabulate(items:list) -> None:
+    print(tabulate(items,tablefmt="double_grid",headers=["Repositories"]))
         
 if __name__ == "__main__":
     print(file_inquirer())
