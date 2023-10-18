@@ -7,7 +7,7 @@ import subprocess
 import github.Repository as Repo
 
 
-def credentials_validator() -> bool:
+def credentials_exist() -> bool:
     """
     Verifies whether there are user credentials present for
     the application to use
@@ -24,13 +24,20 @@ def credentials_validator() -> bool:
     except Exception :
         return False
     
+def verify_credentials() -> bool:
+    try:
+        git_login().get_emojis()
+        return True
+    except Exception:
+        return False
+        
 def create_credentials() -> None:
     """
     Asks user for GitHub Access Token
     then creates a folder and file for the user's token
     """
     try:
-        subprocess.run(["mkdir",".secrets"])
+        subprocess.run(["mkdir",".secrets"],capture_output=True)
     except Exception:
         pass    
     write_token()
@@ -72,8 +79,6 @@ def git_login() -> Github:
     creds = user.get("token")
     auth = Auth.Token(creds)
     git = Github(auth=auth)
-    git.get_user().login
-    
     return git
     
     
@@ -194,7 +199,7 @@ def find_repo(git:Github, repo_name:str) -> Repo.Repository:
     user = git.get_user()
     return user.get_repo(repo_name)
     
-    
+
 
 if __name__ == '__main__':
     print()

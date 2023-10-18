@@ -126,7 +126,7 @@ def git_mode_delete() -> str:
 def git_mode_view() -> str:
     return select_menu([
         Separator(),
-        "Issues on repos",
+        "Issues on repo",
         Separator(),
         "Remote repos", 
         Separator(),

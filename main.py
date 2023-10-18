@@ -12,7 +12,8 @@ def main():
 
         
 def git():
-    if(not remote.credentials_validator()):
+
+    if(not remote.credentials_exist() or not remote.verify_credentials()):
         remote.create_credentials()
     else:
         choice = ui.git_mode()
@@ -56,7 +57,6 @@ def directory_action(action:str):
             
 def git_create():
     choice = ui.git_mode_create()
-    print("create")
     match choice:
         case "Remote & Local repo":
             create_full_repo()
@@ -72,7 +72,7 @@ def git_view():
     match choice:
         case "Remote repos":
             display_all_repos()
-        case "Issue on repo":
+        case "Issues on repo":
             display_issues_in_repo()
     
 def git_delete():
@@ -80,7 +80,7 @@ def git_delete():
     match choice:
         case "Remote repo":
             delete_remote_repo()
-        case "Issue on repo":
+        case "Issues on repo":
             delete_issue_on_repo()
             
 
@@ -173,7 +173,7 @@ def delete_issue_on_repo():
     auth = remote.git_login()
     repos = remote.show_all_repos(auth)
     repo_name = ui.remote_repo_inquirer(repos)
-    repo = remote.find_repo(auth,repo_name);
+    repo = remote.find_repo(auth,repo_name)
     issues = remote.show_all_issues(repo)
     issue = ui.select_issue(issues)
     issue_number = ui.find_issue_number(issue)
