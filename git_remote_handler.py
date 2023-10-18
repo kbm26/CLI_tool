@@ -97,7 +97,7 @@ def delete_repository(repo:Repo.Repository) -> None:
     repo.delete()
     
     
-def create_issue(repo:Repo.Repository , title:str , body:str="" ,label:str="", assignee:str="" ):
+def create_issue(repo:Repo.Repository , title:str , body:str="" ,label:str="" ):
     """Creates a new Issue in a repo under your name
 
     Args:
@@ -107,7 +107,7 @@ def create_issue(repo:Repo.Repository , title:str , body:str="" ,label:str="", a
         label (str, optional): label of issue. Defaults to "".
         assignee (str, optional): assignee to issue. Defaults to "".
     """
-    repo.create_issue(title=title,body=body,assignee=assignee)
+    repo.create_issue(title=title,body=body)
     repo.get_issue(repo.get_issues().totalCount).set_labels(label)
     
 def close_issue(repo:Repo.Repository ,issue_number:int):
@@ -197,4 +197,4 @@ def find_repo(git:Github, repo_name:str) -> Repo.Repository:
     
 
 if __name__ == '__main__':
-    pprint(len(show_all_issues(find_repo(git_login(),"CLI_tool"))))
+    print()

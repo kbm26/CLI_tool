@@ -56,6 +56,7 @@ def directory_action(action:str):
             
 def git_create():
     choice = ui.git_mode_create()
+    print("create")
     match choice:
         case "Remote & Local repo":
             create_full_repo()
@@ -85,72 +86,66 @@ def git_delete():
 
 def create_file():
     path = ui.directory_inquirer()
-    if [*path][-1] == "/":
-        file = input("Name the file you want to create (with an extension eg. .txt)")
-        local.make_file(f"{path}{file}")
-    else:
-        print("Directory not selected")
+    true_path = path_completer(path)
+    file = input("Name the file you want to create (with an extension eg. .txt) ")
+    local.make_file(f"{true_path}{file}")
+
     
 def delete_file():
     path = ui.directory_inquirer()
-    if [*path][-1] == "/":
-        file = input("Name of the file you want to delete (with an extension eg. `.txt`)")
+    true_path = path_completer(path)
+    file = ui.file_inquirer(true_path)
+    if ui.confirmation():
         local.delete_file(file)
-    else:
-        print("Directory not selected")
+
 
 
 def create_directory():
     path = ui.directory_inquirer()
-    if [*path][-1] == "/":
-        Directory = input("Name the Directory you want to create")
-        local.make_folder(Directory)    
-    else:
-        print("Directory not selected")
+    ui.file_inquirer()
+    true_path = path_completer(path)
+    local.make_folder(true_path)    
+
 
     
     
 def delete_directory():
     path = ui.directory_inquirer()
-    if [*path][-1] == "/":
-        Directory = input("Name of the empty Directory you want to delete")
-        local.delete_folder(Directory)   
-    else:
-        print("Directory not selected")
+    if ui.confirmation():
+        local.delete_folder(path)   
+
 
 
 def view_files_and_its_contents():
     path = ui.directory_inquirer()
-    if [*path][-1] == "/":
-        ui.show_tabulate(local.find_files_and_directories(path),"Contents")
-    else:
-        print("Directory not selected")
+    true_path = path_completer(path)
+    ui.show_tabulate(local.find_files_and_directories(true_path),"Contents")
+
         
 def create_full_repo():
     path = ui.directory_inquirer()
-    if [*path][-1] == "/":
-        name = input("Name of the empty Directory you want to delete")
-        local.make_remote_and_local_repo(f"{path}{name}")
-    else:
-        print("Directory not selected")
+    true_path = path_completer(path)
+    name = input("Name of the full repo you want to create: ")
+    local.make_remote_and_local_repo(true_path,name)
+
         
 def create_local_repo():
     path = ui.directory_inquirer()
-    if [*path][-1] == "/":
-        name = input("Name of the empty Directory you want to delete")
-        local.make_local_repo(f"{path}{name}")
-    else:
-        print("Directory not selected")
+    true_path = path_completer(path)
+    name = input("Name of the local repo you want to create: ")
+    local.make_local_repo(f"{true_path}{name}")
+
 
 def create_remote_repo():
-        name = input("Name of the empty Directory you want to delete")
-        local.make_remote_repo(name)
+    name = input("Name of Repo: ")
+    local.make_remote_repo(name)
 
         
 def create_issue_on_repo():
     git = remote.git_login()
     repos = remote.show_all_repos(git)
-    repo = ui.remote_repo_inquirer(repos)
+    repo_name = ui.remote_repo_inquirer(repos)
+    repo = remote.find_repo(git,repo_name)
     details = ui.issue_detail_inquirer()
     remote.create_issue(repo,details.get("title"),details.get("body"),details.get("label"))
         
@@ -186,7 +181,11 @@ def delete_issue_on_repo():
         remote.close_issue(repo,issue_number)   
 
 
-
+def path_completer(path:str):
+    if [*path][-1] != "/":
+        return f"{path}/"
+    else:
+        return path
     
 if __name__ == "__main__":
     main()

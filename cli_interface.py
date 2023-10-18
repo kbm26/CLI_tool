@@ -18,11 +18,11 @@ def directory_inquirer() -> str:
     return src_path
     
     
-def file_inquirer() -> str:
+def file_inquirer(directory) -> str:
     home_path = "~/" if os.name == "posix" else "C:\\"
     src_path = inquirer.text(
         message="Select File:",
-        default=home_path,
+        default=directory,
         validate=PathValidator(is_file=True, message="Input is not a file"),
         completer=file_finder.FilePathCompleter(only_files=True,only_directories=False)
     ).execute()
