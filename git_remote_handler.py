@@ -25,6 +25,11 @@ def credentials_exist() -> bool:
         return False
     
 def verify_credentials() -> bool:
+    """Verifies credentials by running a method that needs 
+
+    Returns:
+        bool: bool of whether credentials are 
+    """
     try:
         git_login().get_emojis()
         return True
@@ -169,6 +174,14 @@ def show_all_issues(repo:Repo.Repository) -> dict:
     return all_issues
 
 def issue_object_formatter(issue) -> dict:
+    """Formats the issue's details into a dictionary format to be used
+
+    Args:
+        issue (Issue): issue that needs to be formatted
+
+    Returns:
+        dict: issue in the form of dict
+    """
     issue_dict = {
         "title":f"{issue.title}",
         "body":"",
@@ -199,7 +212,3 @@ def find_repo(git:Github, repo_name:str) -> Repo.Repository:
     user = git.get_user()
     return user.get_repo(repo_name)
     
-
-
-if __name__ == '__main__':
-    print()

@@ -3,16 +3,19 @@ import git_remote_handler as remote
 import cli_interface as ui
 
 def main():
+    """ Main method that runs the app
+    """
     mode = ui.mode_selection()
     match mode:
         case "Local":
             local_mode()
         case "remote (GitHub)":
-            git()
+            git_mode()
 
         
-def git():
-
+def git_mode():
+    """Handles git methods
+    """
     if(not remote.credentials_exist() or not remote.verify_credentials()):
         remote.create_credentials()
     else:
@@ -29,6 +32,8 @@ def git():
                 git_delete()
                 
 def local_mode():
+    """Handles local methods
+    """
     action = ui.local_action_selector()
     if action == "View":
         view_files_and_its_contents()
@@ -43,12 +48,22 @@ def local_mode():
     
     
 def file_action(action:str):
+    """Handles whether a file will be created or deleted
+
+    Args:
+        action (str): created/deleted
+    """
     if action == "Create":
         create_file()
     else:
         delete_file()
     
 def directory_action(action:str):
+    """Handles whether a directory will be created or deleted
+
+    Args:
+        action (str): created/deleted
+    """
     if action == "Create":
         create_directory()
     else:
@@ -56,6 +71,8 @@ def directory_action(action:str):
     
             
 def git_create():
+    """Handles git create methods
+    """
     choice = ui.git_mode_create()
     match choice:
         case "Remote & Local repo":
@@ -68,6 +85,8 @@ def git_create():
             create_issue_on_repo()
         
 def git_view():
+    """Handles git view methods
+    """
     choice = ui.git_mode_view()
     match choice:
         case "Remote repos":
@@ -76,6 +95,8 @@ def git_view():
             display_issues_in_repo()
     
 def git_delete():
+    """Handles git delete methods
+    """
     choice = ui.git_mode_delete()
     match choice:
         case "Remote repo":
@@ -85,6 +106,8 @@ def git_delete():
             
 
 def create_file():
+    """Calls methods needed to create a file
+    """
     path = ui.directory_inquirer()
     true_path = path_completer(path)
     file = input("Name the file you want to create (with an extension eg. .txt) ")
@@ -92,6 +115,8 @@ def create_file():
 
     
 def delete_file():
+    """Calls methods needed to delete a file
+    """
     path = ui.directory_inquirer()
     true_path = path_completer(path)
     file = ui.file_inquirer(true_path)
@@ -101,6 +126,8 @@ def delete_file():
 
 
 def create_directory():
+    """Calls methods needed to create a directory
+    """
     path = ui.directory_inquirer()
     ui.file_inquirer()
     true_path = path_completer(path)
@@ -110,6 +137,8 @@ def create_directory():
     
     
 def delete_directory():
+    """Calls methods needed to delete a directory
+    """
     path = ui.directory_inquirer()
     if ui.confirmation():
         local.delete_folder(path)   
@@ -117,12 +146,16 @@ def delete_directory():
 
 
 def view_files_and_its_contents():
+    """Calls methods needed to view a directory and its content
+    """
     path = ui.directory_inquirer()
     true_path = path_completer(path)
     ui.show_tabulate(local.find_files_and_directories(true_path),"Contents")
 
         
 def create_full_repo():
+    """Calls methods needed to create a full repo
+    """
     path = ui.directory_inquirer()
     true_path = path_completer(path)
     name = input("Name of the full repo you want to create: ")
@@ -130,6 +163,8 @@ def create_full_repo():
 
         
 def create_local_repo():
+    """Calls methods needed to create a local repo
+    """
     path = ui.directory_inquirer()
     true_path = path_completer(path)
     name = input("Name of the local repo you want to create: ")
@@ -137,11 +172,15 @@ def create_local_repo():
 
 
 def create_remote_repo():
+    """Calls methods needed to create a remote repo
+    """
     name = input("Name of Repo: ")
     local.make_remote_repo(name)
 
         
 def create_issue_on_repo():
+    """Calls methods needed to create a issue on a remote repo
+    """
     git = remote.git_login()
     repos = remote.show_all_repos(git)
     repo_name = ui.remote_repo_inquirer(repos)
@@ -150,10 +189,14 @@ def create_issue_on_repo():
     remote.create_issue(repo,details.get("title"),details.get("body"),details.get("label"))
         
 def display_all_repos():
+    """Calls methods needed to display all remote repo
+    """
     repos = remote.show_all_repos(remote.git_login())
     ui.show_tabulate([[repo] for repo in repos],"Repositories")
 
 def display_issues_in_repo():
+    """Calls methods needed to display all issues on a remote repo
+    """
     auth = remote.git_login()
     repos = remote.show_all_repos(auth)
     repo_chosen = ui.remote_repo_inquirer(repos)
@@ -162,6 +205,8 @@ def display_issues_in_repo():
     ui.display_issues(issues)
     
 def delete_remote_repo():
+    """Calls methods needed to delete a remote repo
+    """
     auth = remote.git_login()
     repos = remote.show_all_repos(auth)
     repo_name = ui.remote_repo_inquirer(repos)
@@ -170,6 +215,8 @@ def delete_remote_repo():
         remote.delete_repository(repo)
     
 def delete_issue_on_repo():
+    """Calls methods needed to delete a issue on a remote repo
+    """
     auth = remote.git_login()
     repos = remote.show_all_repos(auth)
     repo_name = ui.remote_repo_inquirer(repos)
@@ -181,7 +228,15 @@ def delete_issue_on_repo():
         remote.close_issue(repo,issue_number)   
 
 
-def path_completer(path:str):
+def path_completer(path:str) -> str:
+    """completes a path
+
+    Args:
+        path (str): path that needs to be completed
+
+    Returns:
+        str: _description_
+    """
     if [*path][-1] != "/":
         return f"{path}/"
     else:
